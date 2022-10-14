@@ -10,22 +10,26 @@ $ python3.10 --version  # if this works, you're good
 Python 3.10.7
 ```
 
-On the SEASnet server, **navigate to the directory containing your shuf.py**. You can then download my distribution and extract it. I also recommend you set up a virtual environment before installing dependencies.
+On the SEASnet server, **navigate to the directory containing your shuf.py**.
+
+You can then download my distribution and extract it. I also recommend you set up a virtual environment before installing dependencies. If you trust me, paste this entire code block and it should work its magic:
 
 ```shell
-cd /your/assignment2/directory
 curl https://raw.githubusercontent.com/vinlin24/test-shuf/main/test_shuf.tgz --output test_shuf.tgz
 tar -xvf test_shuf.tgz
 python3.10 -m venv .venv
 source .venv/bin/activate
 pip3.10 install rich
+python3.10 test_shuf.py --help
 ```
 
 My script uses the [rich](https://github.com/Textualize/rich) library for fancy outputting.
 
-If `curl` fails for whatever reason, [just download the file from my GitHub](https://github.com/vinlin24/test-shuf/blob/main/test_shuf.tgz) and copy it onto the remote server.
+If `curl` fails for whatever reason, [just download the file from my GitHub](https://github.com/vinlin24/test-shuf/blob/main/test_shuf.tgz) and copy it onto the remote server, then resume the steps.
 
 ## Usage
+
+For the best experience, full-screen your terminal :D
 
 To test with [my provided test cases](src/test_cases), run:
 
