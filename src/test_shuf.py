@@ -260,7 +260,8 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
     # Information header
     case_info = (
         f"[cyan]TEST CASE {test_case.num} ({num_left} left)[/]\n"
-        f"[yellow]Context:[/] [bright_black]{test_case.comment or ''}[/]"
+        f"[yellow]Context:[/] [default]{test_case.comment or ''}[/]\n"
+        f"[yellow]Options:[/] [default]{test_case.command}[/]"
     )
     header = Panel(case_info,
                    style="cyan",
@@ -269,23 +270,29 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
     console.print()
 
     # Run the commands
-    gnu_output, gnu_retcode = run_process(True, test_case.command)
-    py_output, py_retcode = run_process(False, test_case.command)
+    gnu_stdout, gnu_stderr, gnu_retcode = run_process(True, test_case.command)
+    py_stdout, py_stderr, py_retcode = run_process(False, test_case.command)
 
-    # Automatically mark this test case for obvious differences:
-    wrong_retcode = False
-    wrong_output_presence = False
+    # Auto-mark this test case for obvious differences
+    wrong_retcode = wrong_stdout_presence = wrong_stderr_presence = False
+
     if gnu_retcode != py_retcode:
         test_case.status = Status.AUTO_MARKED
         wrong_retcode = True
-    if (gnu_output == "" and py_output != "") \
-            or (py_output == "" and gnu_output != ""):
+    if (gnu_stdout == "" and py_stdout != "") \
+            or (py_stdout == "" and gnu_stdout != ""):
         test_case.status = Status.AUTO_MARKED
-        wrong_output_presence = True
+        wrong_stdout_presence = True
+    if (gnu_stderr == "" and py_stderr != "") \
+            or (py_stderr == "" and gnu_stderr != ""):
+        test_case.status = Status.AUTO_MARKED
+        wrong_stderr_presence = True
 
     # Post-processing to make ambiguous output more clear in the table
-    gnu_output = disambiguate_output(gnu_output)
-    py_output = disambiguate_output(py_output)
+    gnu_stdout = gnu_stdout or "[bright_black]<NO STDOUT>[/]"
+    py_stdout = py_stdout or "[bright_black]<NO STDOUT>[/]"
+    gnu_stderr = gnu_stderr or "[bright_black]<NO STDERR>[/]"
+    py_stderr = py_stderr or "[bright_black]<NO STDERR>[/]"
 
     # Prepare and output comparison table
     table = Table(title="Output Comparison (GNU <--> YOURS)",
@@ -295,9 +302,14 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
     table.add_column(f"$ shuf {test_case.command}")
     table.add_column(f"$ python3.10 shuf.py {test_case.command}")
 
-    table.add_row(gnu_output, py_output,
-                  style="red" if wrong_output_presence else None)
-    table.add_row(f"Exit code: {gnu_retcode}", f"Exit code: {py_retcode}",
+    table.add_row(gnu_stdout,
+                  py_stdout,
+                  style="red" if wrong_stdout_presence else None)
+    table.add_row(gnu_stderr,
+                  py_stderr,
+                  style="red" if wrong_stderr_presence else None)
+    table.add_row(f"[yellow]Exit code:[/] {gnu_retcode}",
+                  f"[yellow]Exit code:[/] {py_retcode}",
                   style="red" if wrong_retcode else None)
 
     console.print()
@@ -341,7 +353,7 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
     return True
 
 
-def run_process(gnu: bool, args: str) -> tuple[str, int | None]:
+def run_process(gnu: bool, args: str) -> tuple[str, str, int | None]:
     """Run a shuf implementation in a subprocess.
 
     Arguments:
@@ -350,9 +362,9 @@ def run_process(gnu: bool, args: str) -> tuple[str, int | None]:
         args (str): The command line options to use.
 
     Returns:
-        tuple[str, int | None]: A 2-tuple containing the combined
-        outputs of the subprocess' stdout and stderr streams and the
-        return code, None if interrupted.
+        tuple[str, str, int | None]: A 3-tuple containing the stdout,
+        stderr, and return code of the child process. stdout == stderr
+        == "<INTERRUPTED>" and return code is None if interrupted.
     """
     head = "shuf" if gnu else "python3.10 shuf.py"
     # If the program expects input, user will see this message
@@ -364,25 +376,16 @@ def run_process(gnu: bool, args: str) -> tuple[str, int | None]:
     with subprocess.Popen(f"{head} {args}",
                           shell=True,
                           stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT
+                          stderr=subprocess.PIPE
                           ) as child:
         try:
-            stdout, _ = child.communicate()
+            stdout, stderr = child.communicate()
         # Bro I can't get this working, child.stdout.flush() doesn't work either
         except KeyboardInterrupt:
-            return ("<INTERRUPTED>", None)
-        return (stdout.decode("utf-8"), child.returncode)
-
-
-def disambiguate_output(output: str) -> str:
-    """Make blanks parts of the output obvious what they are."""
-    match output:
-        case "":
-            return "<NO OUTPUT>"
-        case "\n":
-            return "<NEWLINE>"
-        case _:
-            return output.replace("\n\n", "\n<NEWLINE>")
+            return ("<INTERRUPTED>", "<INTERRUPTED>", None)
+        return (stdout.decode("utf-8"),
+                stderr.decode("utf-8"),
+                child.returncode)
 
 
 def print_summary(test_cases: list[TestCase]) -> None:

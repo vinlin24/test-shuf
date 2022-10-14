@@ -166,3 +166,6 @@ cython_debug/
 
 # Universal exception
 !.gitkeep
+
+# My answers lol
+src/shuf.py
