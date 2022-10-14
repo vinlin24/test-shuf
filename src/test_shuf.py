@@ -179,7 +179,7 @@ def load_test_cases(include: list[str] | None,
                 current_comment = None
                 continue
 
-            if line == "#      Your Custom Cases      #":
+            if line == "#      Your Custom Cases      #\n":
                 past_custom_barrier = True
                 continue
 
@@ -230,12 +230,14 @@ def print_test_cases(test_cases: list[TestCase]) -> None:
     table.add_column("Num",
                      justify="right",
                      style=Style(color="cyan", bold=True))
+    table.add_column("Line", justify="right")
     table.add_column("Options")
     table.add_column("Context", style="bright_black")
     table.add_column("Custom")
     for test_case in test_cases:
         context = test_case.comment or ""
         table.add_row(str(test_case.num),
+                      str(test_case.line_num),
                       test_case.command,
                       context,
                       str(test_case.custom))
