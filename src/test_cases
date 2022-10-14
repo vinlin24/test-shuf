@@ -1,0 +1,140 @@
+# =========================== INSTRUCTIONS ============================
+#
+# Each line should contain the options you will pass as test cases to
+# both your shuf.py and the GNU shuf. Whitespace lines and lines
+# starting with '#' will be treated as comments. The comment line
+# directly before a group of tests will be parsed as the "context" for
+# those tests, which lets the program give more informative summary
+# messages. For example, to test::
+#
+#   shuf -rn 10 -e 1 2 3 4 5
+#   python3.10 shuf.py -rn 10 -e 1 2 3 4 5
+#
+# You would include after the 'Your Custom Cases barrier'::
+#
+#   # Test combo of -r, -n, -e
+#   -rn 10 -e 1 2 3 4 5
+#
+# Use the grave mark/backtick (`) as a special token to denote passing
+# absolutely nothing i.e. testing the zero non-option stdin with no
+# flags functionality - See 'Basic stdin input'.
+#
+# =====================================================================
+
+# ======================== #
+#      Single Options      #
+# ======================== #
+
+# Help message
+--help
+
+# Basic echo
+-e 1 2 3 4 5
+--echo 1 2 3 4 5
+-e
+--echo
+
+# Basic input-range
+-i 1-10
+--input-range=1-10
+-i 0-0
+
+# Basic file input
+test_input
+
+# Basic stdin input: use RET C-d (Unix/MacOS) to send EOF. This one's annoying I know, I couldn't get I/O to work the way I wanted :(
+`
+-
+
+# Should run forever: CANCEL EACH WITH C-c!! Trust your gut with this one, I couldn't get I/O to work :(
+test_input -r
+
+# ================================== #
+#      Erroneous Single Options      #
+# ================================== #
+
+# Bad input ranges
+-i
+-i 5
+-i lmao
+-i 1.0-5
+-i 1-5.0
+-i -1-5
+-i 1--5
+
+# Non-existent file inputs
+""
+lmao
+
+# Attempting to read a directory
+~
+
+# ================================ #
+#      Combination of Options      #
+# ================================ #
+
+# -n: fewer than entries, without replacement
+test_input -n 5
+
+# -n: greater than entries, without replacement
+test_input -n 10
+
+# -n: fewer than entries, with replacement
+test_input -rn 5
+
+# -n: more than entries, with replacement
+test_input -rn 10
+
+# What if the options were put in the front?
+-rn 10 test_input
+
+# ==================================== #
+#      Mutually Exclusive Options      #
+# ==================================== #
+
+# Mixing -e and -i: should raise an error
+-e 1 2 3 4 5 -i 6-10
+
+# Mixing -e and FILE: FILE should be treated as an entry
+test_input -e 1 2 3 4 5
+
+# Mixing -i and FILE: FILE should raise an error
+test_input -i 1-10
+
+# ============================== #
+#      Unrecognized Options      #
+# ============================== #
+
+# GNU shuf doesn't have this lol
+-h
+
+# Reject unrecognized options even with echo
+-e 1 2 3 4 5 -w 6 7 8
+
+# How about with the long name syntax?
+-e 1 2 3 4 5 --foo 6 7 8
+
+# ========================== #
+#      Weird Edge Cases      #
+# ========================== #
+
+# Should give option-specific errors instead of mutual exclusion error
+-e -i
+-i -e
+
+# A difference of 1 should NOT give error
+-i 1-0
+
+# Passing a float should be allowed, you should floor it
+-e 1 2 3 4 5 -n 3.6
+
+# Arbitrary positions of echo arguments
+1 2 -e 3 4 -n 5 5
+
+# Do not alter this barrier below!
+# This lets you skip my provided tests!
+# =========================== #
+#      Your Custom Cases      #
+# =========================== #
+
+# Get creative, and write comments like above for more informative summary messages!
