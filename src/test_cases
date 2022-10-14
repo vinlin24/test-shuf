@@ -88,6 +88,9 @@ test_input -rn 10
 # What if the options were put in the front?
 -rn 10 test_input
 
+# Invalid -n value
+-e 1 2 3 4 5 -n 3.6
+
 # ==================================== #
 #      Mutually Exclusive Options      #
 # ==================================== #
@@ -124,9 +127,6 @@ test_input -i 1-10
 
 # A difference of 1 should NOT give error
 -i 1-0
-
-# Passing a float should be allowed, you should floor it
--e 1 2 3 4 5 -n 3.6
 
 # Arbitrary positions of echo arguments
 1 2 -e 3 4 -n 5 5
