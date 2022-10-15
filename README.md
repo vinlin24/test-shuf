@@ -78,8 +78,33 @@ options:
                         exclude these test cases (as numbered in --list)
 ```
 
+**Quick Troubleshooting Note**
+
+If you get a `ModuleNotFoundError` for `rich`, that probably means you have since left the virtual environment, so reactivate it first with:
+
+```shell
+source .venv/bin/activate
+```
+
+or just install it globally. It’s a beautiful library :)
+
+```shell
+pip3.10 install rich
+```
+
 ## Disclaimer
 
 - Because output is *meant* to be random and help messages do not have to exactly match, it was very impractical to write a unit tester or other conventional testing mechanism. That's why this tester is *interactive*, and requires you to compare the outputs and ACCEPT or MARK the test cases.
-- I do not claim my provided test cases to be cases to be an exhaustive list.
+- I do not claim my provided test cases to be an exhaustive list.
 - I struggled implementing the I/O with cases involving stdin, so be sure to double-check such test cases on your own (e.g. manually entering entries capped with `C-d`, or piping output into your shuf.py with `|`).
+
+## Preview
+
+An example comparison:
+![](demo/compare-outputs.png)
+
+An example of the program automatically marking an egregious difference:
+![](demo/auto-marking.png)
+
+An example summary screen:
+![](demo/summary-screen.png)
