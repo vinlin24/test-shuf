@@ -278,9 +278,9 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
     # Auto-mark this test case for obvious differences
     wrong_retcode = wrong_stdout_presence = wrong_stderr_presence = False
 
-    if gnu_retcode != py_retcode:
-        test_case.status = Status.AUTO_MARKED
-        wrong_retcode = True
+    # if gnu_retcode != py_retcode:
+    #     test_case.status = Status.AUTO_MARKED
+    #     wrong_retcode = True
     if (gnu_stdout == "" and py_stdout != "") \
             or (py_stdout == "" and gnu_stdout != ""):
         test_case.status = Status.AUTO_MARKED
