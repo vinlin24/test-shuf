@@ -13,7 +13,7 @@ Usage instructions are included in the provided file.
 
 Usage on the SEASnet server::
 
-    python3.10 test_shuf.py [OPTIONS]
+    python3 test_shuf.py [OPTIONS]
 """
 
 __author__ = "Vincent Lin"
@@ -132,7 +132,7 @@ def clear_screen(message: str | None = None, color: str | None = None) -> None:
 
 def get_original_command() -> str:
     """Get italicized string representing invocation of this script."""
-    return "[italic]$ python3.10 " + escape(" ".join(sys.argv)) + "[/]"
+    return "[italic]$ python3 " + escape(" ".join(sys.argv)) + "[/]"
 
 
 def load_test_cases(include: list[str] | None,
@@ -302,7 +302,7 @@ def run_test_case(test_case: TestCase, num_left: int) -> bool:
                   header_style="bold cyan")
 
     table.add_column(f"$ shuf {test_case.command}")
-    table.add_column(f"$ python3.10 shuf.py {test_case.command}")
+    table.add_column(f"$ python3 shuf.py {test_case.command}")
 
     table.add_row(gnu_stdout,
                   py_stdout,
@@ -368,7 +368,7 @@ def run_process(gnu: bool, args: str) -> tuple[str, str, int | None]:
         stderr, and return code of the child process. stdout == stderr
         == "<INTERRUPTED>" and return code is None if interrupted.
     """
-    head = "shuf" if gnu else "python3.10 shuf.py"
+    head = "shuf" if gnu else "python3 shuf.py"
     # If the program expects input, user will see this message
     # Otherwise, it'll be covered by clear_screen()
     console.print(
