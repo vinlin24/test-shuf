@@ -6,8 +6,8 @@
 
 ```console
 $ export PATH=/usr/local/cs/bin:$PATH
-$ python3.10 --version  # if this works, you're good
-Python 3.10.7
+$ python3 --version  # if this works, you're good
+Python 3.xx.x
 ```
 
 On the SEASnet server, **navigate to the directory containing your shuf.py**.
@@ -17,10 +17,10 @@ You can then download my distribution and extract it. I also recommend you set u
 ```shell
 curl https://raw.githubusercontent.com/vinlin24/test-shuf/main/test_shuf.tgz --output test_shuf.tgz
 tar -xvf test_shuf.tgz
-python3.10 -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
-pip3.10 install rich
-python3.10 test_shuf.py --help
+pip3 install rich
+python3 test_shuf.py --help
 ```
 
 My script uses the [rich](https://github.com/Textualize/rich) library for fancy outputting.
@@ -34,7 +34,7 @@ For the best experience, full-screen your terminal :D
 To test with [my provided test cases](src/test_cases), run:
 
 ```
-python3.10 test_shuf.py
+python3 test_shuf.py
 ```
 
 Each test case is fed to you one screenful at a time. Compare the outputs. Hit `RET` to ACCEPT them, `m` to MARK them, etc. MARKED test cases will be presented to you on a summary screen at the end of the program for your review.
@@ -49,21 +49,21 @@ emacs test_input
 You can preview how the test cases are loaded and parsed with:
 
 ```shell
-python3.10 test_shuf.py --list
+python3 test_shuf.py --list
 ```
 
 The script supports some command line arguments to give you control (albeit a bit limited) over what test cases to use:
 
 ```shell
-python3.10 test_shuf.py --exclude 10 11 12
-python3.10 test_shuf.py --include $(seq 32 36)
-python3.10 test_shuf.py --custom-only
+python3 test_shuf.py --exclude 10 11 12
+python3 test_shuf.py --include $(seq 32 36)
+python3 test_shuf.py --custom-only
 ```
 
 As usual, for more information about each option, run:
 
 ```console
-$ python3.10 test_shuf.py --help
+$ python3 test_shuf.py --help
 usage: test_shuf.py [-h] [-l] [-c] [-i [CASE_NUMS ...] | -e [CASE_NUMS ...]]
 
 Interactive tester for shuf.py.
@@ -89,7 +89,7 @@ source .venv/bin/activate
 or just install it globally. It’s a beautiful library :)
 
 ```shell
-pip3.10 install rich
+pip3 install rich
 ```
 
 ## Disclaimer
